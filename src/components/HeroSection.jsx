@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaFacebookF, FaTwitter, FaInstagram, FaMapMarkerAlt, FaPhoneAlt, FaEnvelope } from 'react-icons/fa';
 import BackgroundAnimator from './BackgroundAnimator';
+import { Link } from 'react-router-dom';
 
 const HeroSection = () => {
     const [scrolled, setScrolled] = useState(false);
@@ -21,9 +22,9 @@ const HeroSection = () => {
                 <div className={`hidden lg:block border-b border-white/10 py-3 transition-all duration-500 ${scrolled ? 'opacity-0' : 'opacity-100'}`}>
                     <div className="container mx-auto px-6 flex justify-between items-center text-[11px] text-gray-300 tracking-widest uppercase">
                         <div className="flex gap-8">
-                            <span className="flex items-center gap-2"><FaMapMarkerAlt className="text-[#b59473]" /> Brooklyn, NY 11201</span>
-                            <span className="flex items-center gap-2"><FaPhoneAlt className="text-[#b59473]" /> +929 333 9296</span>
-                            <span className="flex items-center gap-2"><FaEnvelope className="text-[#b59473]" /> contact@almaris.com</span>
+                            <span className="flex items-center gap-2"><FaMapMarkerAlt className="text-[#b59473]" /> Dhaka, Bangladesh</span>
+                            <span className="flex items-center gap-2"><FaPhoneAlt className="text-[#b59473]" /> +123 456 7890</span>
+                            <span className="flex items-center gap-2"><FaEnvelope className="text-[#b59473]" /> demo@almaris.com</span>
                         </div>
                         <div className="flex gap-5 items-center">
                             <FaFacebookF className="hover:text-white cursor-pointer transition-colors" />
@@ -56,12 +57,12 @@ const HeroSection = () => {
                                     </p>
                                     
                                     <div className="flex flex-wrap gap-4 pt-4">
-                                        <button className="bg-[#b59473] text-white px-10 py-4 text-xs font-bold uppercase tracking-widest hover:bg-[#967a5e] transition-all rounded-sm shadow-xl">
+                                        <Link to={"/reservation"}><button className="bg-[#b59473] text-white px-10 py-4 text-xs font-bold uppercase tracking-widest hover:bg-[#967a5e] transition-all rounded-sm shadow-xl">
                                             Book Your Stay
-                                        </button>
-                                        <button className="border border-white/20 text-white px-10 py-4 text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all rounded-sm">
+                                        </button></Link>
+                                        <Link to={'/all-rooms'}><button className="border border-white/20 text-white px-10 py-4 text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all rounded-sm">
                                             View Rooms
-                                        </button>
+                                        </button></Link>
                                     </div>
                                 </div>
                             </div>

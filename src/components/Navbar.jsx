@@ -18,9 +18,9 @@ const Navbar = () => {
     const navLinks = [
         { name: 'Home', href: '/' },
         { name: 'Rooms', href: '/all-rooms' },
-        { name: 'Gallery', href: '#' },
-        { name: 'News', href: '/news' },
-        { name: 'Contact', href: '/contact' },
+        { name: 'Gallery', href: '/gallery' },
+        { name: 'Offers', href: '/offers' },
+        { name: 'About Us', href: '/about' },
     ];
 
     return (
@@ -50,9 +50,11 @@ const Navbar = () => {
                     {/* Right Section */}
                     <div className="flex items-center gap-4">
                         <div className="hidden sm:block">
-                            <Link to={"/reservation"}><button className="border border-white px-6 py-2 text-white text-xs uppercase tracking-[0.2em] hover:bg-white hover:text-black transition-all duration-500">
-                                Reservation
-                            </button></Link>
+                            <Link to={"/reservation"}>
+                                <button className="border border-white px-6 py-2 text-white text-xs uppercase tracking-[0.2em] hover:bg-white hover:text-black transition-all duration-500">
+                                    Reservation
+                                </button>
+                            </Link>
                         </div>
 
                         {/* Hamburger Icon */}
@@ -65,26 +67,26 @@ const Navbar = () => {
                     </div>
                 </div>
 
-                {/* Mobile Menu Overlay - Glassmorphism Added */}
+                {/* Mobile Menu Overlay */}
                 <AnimatePresence>
                     {isOpen && (
                         <>
-                            {/* Dark Blur Background Layer */}
+                            {/* Dark Blur Background Layer - Fixed to stay dark on scroll */}
                             <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
                                 onClick={() => setIsOpen(false)}
-                                className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100]"
+                                className="fixed inset-0 bg-black/90 backdrop-blur-md z-[100]"
                             />
 
-                            {/* Sliding Glass Drawer */}
+                            {/* Sliding Glass Drawer - Set to bg-black/60 to ensure it stays dark */}
                             <motion.div
                                 initial={{ x: '100%' }}
                                 animate={{ x: 0 }}
                                 exit={{ x: '100%' }}
                                 transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                                className="fixed right-0 top-0 h-screen w-[85%] bg-white/10 backdrop-blur-xl border-l border-white/20 z-[110] flex flex-col items-center justify-center space-y-8 shadow-2xl"
+                                className="fixed right-0 top-0 h-screen w-[85%] bg-black/60 backdrop-blur-2xl border-l border-white/10 z-[110] flex flex-col items-center justify-center space-y-8 shadow-2xl"
                             >
                                 {navLinks.map((link, index) => (
                                     <motion.a
@@ -100,14 +102,18 @@ const Navbar = () => {
                                     </motion.a>
                                 ))}
                                 
-                                <motion.button 
+                                {/* Mobile Reservation Button linked to /reservation */}
+                                <motion.div
                                     initial={{ opacity: 0, scale: 0.9 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     transition={{ delay: 0.6 }}
-                                    className="mt-6 border-2 border-yellow-600 px-10 py-3 text-yellow-600 font-bold text-sm uppercase tracking-widest hover:bg-yellow-600 hover:text-black transition-all"
                                 >
-                                    Reservation
-                                </motion.button>
+                                    <Link to="/reservation" onClick={() => setIsOpen(false)}>
+                                        <button className="mt-6 border-2 border-yellow-600 px-10 py-3 text-yellow-600 font-bold text-sm uppercase tracking-widest hover:bg-yellow-600 hover:text-black transition-all">
+                                            Reservation
+                                        </button>
+                                    </Link>
+                                </motion.div>
                             </motion.div>
                         </>
                     )}

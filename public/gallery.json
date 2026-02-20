@@ -1,0 +1,42 @@
+[
+    {
+        "id": 1,
+        "url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb",
+        "title": "Main Entrance"
+    },
+    {
+        "id": 2,
+        "url": "https://images.unsplash.com/photo-1566073771259-6a8506099945",
+        "title": "Ocean Suite"
+    },
+    {
+        "id": 3,
+        "url": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b",
+        "title": "Royal Lobby"
+    },
+    {
+        "id": 4,
+        "url": "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4",
+        "title": "Infinity Pool"
+    },
+    {
+        "id": 5,
+        "url": "https://images.unsplash.com/photo-1571896349842-33c89424de2d",
+        "title": "Dining Hall"
+    },
+    {
+        "id": 6,
+        "url": "https://images.unsplash.com/photo-1544124499-58912cbddaad",
+        "title": "Spa Center"
+    },
+    {
+        "id": 7,
+        "url": "https://images.unsplash.com/photo-1551882547-ff43c63efe81",
+        "title": "Morning View"
+    },
+    {
+        "id": 8,
+        "url": "https://images.unsplash.com/photo-1445019980597-93fa8acb246c",
+        "title": "Suite Balcony"
+    }
+]
