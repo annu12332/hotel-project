@@ -1,4 +1,9 @@
-import { Routes, Route } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from './firebase.config';
+
+// Components
 import Navbar from './components/Navbar';
 import BackgroundAnimator from './components/BackgroundAnimator';
 import Accommodation from './components/Accommodation';
@@ -7,35 +12,64 @@ import BookingBar from './components/BookingBar';
 import ExtraFacilities from './components/ExtraFacilites';
 import Facilities from './components/Facilities';
 import HeroSection from './components/HeroSection';
+import Footer from './components/Footer';
+import ScrollToTop from './components/ScrollToTop';
+import Gallery from './components/Gallery';
+
+// Pages
 import RoomDetails from './pages/RoomDetails';
 import AllRooms from './pages/AllRooms';
-import Footer from './components/Footer';
 import ReservationForm from './forms/Reservation';
 import AboutUs from './pages/AboutUs';
-import Gallery from './components/Gallery';
 import AllPhotos from './pages/AllPhotos';
 import Offers from './pages/Offers';
 import OfferDetails from './pages/OffersDetails';
-import ScrollToTop from './components/ScrollToTop';
+import Login from './admin/Login'; // আপনার তৈরি করা Login পেজ
+import { AdminDashboard } from './admin/AdminDashboard';
 
 function App() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const location = useLocation();
+
+  // ১. ইউজার লগইন আছে কি না তা চেক করা
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // ২. অ্যাডমিন পেজে থাকলে মেইন ওয়েবসাইটের Navbar/Footer লুকানোর লজিক
+  const isAdminPath = location.pathname.startsWith('/admin');
+
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-[#0f172a] text-indigo-500 font-bold tracking-widest uppercase">
+        Loading AlMaris...
+      </div>
+    );
+  }
+
   return (
     <div className="relative min-h-screen">
-      {/* 1. ScrollToTop ke Routes er baire rakha hoyeche jate eta shob path change e kaj kore */}
       <ScrollToTop />
 
-      {/* --- Global Components --- */}
-      <Navbar />
+      {/* অ্যাডমিন প্যানেল ছাড়া অন্য সব পেজে Navbar দেখাবে */}
+      {!isAdminPath && <Navbar />}
 
-      <div className="fixed inset-0 z-[-1]">
-        <BackgroundAnimator />
-        <div className="absolute inset-0 bg-black/60"></div>
-      </div>
+      {/* ব্যাকগ্রাউন্ড অ্যানিমেশন শুধুমাত্র মেইন সাইটের জন্য */}
+      {!isAdminPath && (
+        <div className="fixed inset-0 z-[-1]">
+          <BackgroundAnimator />
+          <div className="absolute inset-0 bg-black/60"></div>
+        </div>
+      )}
 
-      {/* --- Dynamic Content Layer --- */}
-      <main className="relative z-10">
+      <main className={isAdminPath ? "" : "relative z-10"}>
         <Routes>
-          {/* Home Route */}
+          {/* --- Public Routes --- */}
           <Route path="/" element={
             <>
               <HeroSection />
@@ -48,20 +82,32 @@ function App() {
             </>
           } />
 
-          {/* Room Details Route */}
-          <Route path="/room/:slug" element={<RoomDetails />} />
-
-          {/* All routes */}
-          <Route path="/all-rooms" element={<AllRooms />} />
+          <Route path="/room/:id" element={<RoomDetails />} />
           <Route path="/reservation" element={<ReservationForm />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/gallery" element={<AllPhotos />} />
           <Route path="/offers" element={<Offers />} />
           <Route path="/offers/:id" element={<OfferDetails />} />
+          <Route path="/all-rooms" element={<AllRooms />} />
+
+          {/* --- Login Route --- */}
+          {/* লগইন করা থাকলে ইউজার আর লগইন পেজে যেতে পারবে না, সরাসরি ড্যাশবোর্ডে যাবে */}
+          <Route path="/login" element={!user ? <Login /> : <Navigate to="/admin/dashboard" />} />
+
+          {/* --- Protected Admin Routes --- */}
+          {/* লগইন করা না থাকলে কেউ /admin/dashboard এ ঢুকতে পারবে না */}
+          <Route 
+            path="/admin/dashboard/*" 
+            element={user ? <AdminDashboard /> : <Navigate to="/login" />} 
+          />
+
+          {/* ভুল ইউআরএল দিলে হোমে পাঠিয়ে দিবে */}
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>
 
-      <Footer />
+      {/* অ্যাডমিন প্যানেল ছাড়া অন্য সব পেজে Footer দেখাবে */}
+      {!isAdminPath && <Footer />}
     </div>
   );
 }
