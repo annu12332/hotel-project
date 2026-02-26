@@ -71,3 +71,5 @@ const PackageDetails = () => {
         </div>
     );
 };
+
+export default PackageDetails;

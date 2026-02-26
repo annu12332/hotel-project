@@ -1,18 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Loader2 } from 'lucide-react';
+import axios from 'axios'; 
 
 const Gallery = () => {
     const [images, setImages] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('/gallery.json')
-            .then(res => res.json())
-            .then(data => setImages(data));
+        const fetchGallery = async () => {
+            try {
+                const res = await axios.get('https://hotel-server-qryr.onrender.com/api/gallery');
+                setImages(res.data);
+            } catch (err) {
+                console.error("Gallery Fetch Error:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchGallery();
     }, []);
 
-    // Double the images array for infinite loop effect
+    if (loading && images.length === 0) {
+        return (
+            <div className="py-24 bg-[#050505] flex justify-center items-center">
+                <Loader2 className="animate-spin text-[#b59473]" size={30} />
+            </div>
+        );
+    }
+
     const duplicatedImages = [...images, ...images];
 
     return (
@@ -27,36 +45,41 @@ const Gallery = () => {
 
             {/* --- Infinite Scroll Row --- */}
             <div className="relative flex overflow-hidden group mb-16">
-                <motion.div 
-                    className="flex gap-4 pr-4"
-                    animate={{ x: ["0%", "-50%"] }}
-                    transition={{ 
-                        ease: "linear", 
-                        duration: 30, 
-                        repeat: Infinity 
-                    }}
-                >
-                    {duplicatedImages.map((img, idx) => (
-                        <div 
-                            key={idx} 
-                            className="relative w-[300px] md:w-[450px] h-[250px] md:h-[350px] shrink-0 overflow-hidden rounded-sm"
-                        >
-                            <img 
-                                src={img.url} 
-                                alt={img.title} 
-                                // Grayscale remove kora hoyeche, ekhon chobi colorful hobe
-                                className="w-full h-full object-cover transition-all duration-700 hover:scale-110"
-                            />
-                            <div className="absolute inset-0 bg-black/10"></div>
-                            <div className="absolute bottom-6 left-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-black/40 p-2 backdrop-blur-sm">
-                                <span className="text-white text-[10px] uppercase tracking-[0.3em] font-serif">{img.title}</span>
+                {images.length > 0 ? (
+                    <motion.div 
+                        className="flex gap-4 pr-4"
+                        animate={{ x: ["0%", "-50%"] }}
+                        transition={{ 
+                            ease: "linear", 
+                            duration: images.length * 5, 
+                            repeat: Infinity 
+                        }}
+                    >
+                        {duplicatedImages.map((img, idx) => (
+                            <div 
+                                key={idx} 
+                                className="relative w-[300px] md:w-[450px] h-[250px] md:h-[350px] shrink-0 overflow-hidden rounded-sm"
+                            >
+                                <img 
+                                    src={img.image} 
+                                    alt={img.title || "Gallery Image"} 
+                                    className="w-full h-full object-cover transition-all duration-700 hover:scale-110"
+                                />
+                                <div className="absolute inset-0 bg-black/10"></div>
+                                <div className="absolute bottom-6 left-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-black/40 p-2 backdrop-blur-sm">
+                                    <span className="text-white text-[10px] uppercase tracking-[0.3em] font-serif">
+                                        {img.title || 'Luxury View'}
+                                    </span>
+                                </div>
                             </div>
-                        </div>
-                    ))}
-                </motion.div>
+                        ))}
+                    </motion.div>
+                ) : (
+                    <div className="w-full text-center text-gray-500 py-10">No photos found in gallery.</div>
+                )}
             </div>
 
-            {/* --- See All Photos Button (At the bottom) --- */}
+            {/* --- See All Photos Button --- */}
             <div className="flex justify-center" data-aos="fade-up">
                 <Link 
                     to="/gallery" 

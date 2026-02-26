@@ -28,6 +28,8 @@ import Login from './admin/Login';
 import { AdminDashboard } from './admin/AdminDashboard';
 import BlogPage from './pages/BlogPage';
 import BlogDetails from './pages/BlogDetails';
+import PackageDetails from './pages/PackageDetails';
+import PackagesPage from './pages/PackagePage';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -89,6 +91,9 @@ function App() {
           <Route path="/about" element={<AboutUs />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:id" element={<BlogDetails />} />
+          <Route path="/package/:id" element={<PackageDetails />} />
+          <Route path="/packages" element={<PackagesPage />} />
+
 
           <Route path="/gallery" element={<AllPhotos />} />
           <Route path="/offers" element={<Offers />} />
@@ -96,11 +101,9 @@ function App() {
           <Route path="/all-rooms" element={<AllRooms />} />
 
           {/* --- Login Route --- */}
-          {/* লগইন করা থাকলে ইউজার আর লগইন পেজে যেতে পারবে না, সরাসরি ড্যাশবোর্ডে যাবে */}
           <Route path="/login" element={!user ? <Login /> : <Navigate to="/admin/dashboard" />} />
 
           {/* --- Protected Admin Routes --- */}
-          {/* লগইন করা না থাকলে কেউ /admin/dashboard এ ঢুকতে পারবে না */}
           <Route
             path="/admin/dashboard/*"
             element={user ? <AdminDashboard /> : <Navigate to="/login" />}

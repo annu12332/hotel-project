@@ -47,3 +47,4 @@ const PackagesPage = () => {
         </div>
     );
 };
+export default PackagesPage;
