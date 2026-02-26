@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     LayoutDashboard, PlusCircle, Hotel, LogOut, 
-    CalendarCheck, Image as ImageIcon, X, Tag 
+    CalendarCheck, Image as ImageIcon, X, Tag, FileText, Package 
 } from 'lucide-react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase.config'; 
@@ -11,13 +11,15 @@ import { useNavigate } from 'react-router-dom';
 export const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) => {
     const navigate = useNavigate();
 
-    // menuItems-এ 'manage-offers' যুক্ত করা হয়েছে
+    // menuItems-এ 'manage-packages' যুক্ত করা হয়েছে
     const menuItems = [
         { id: 'stats', name: 'Dashboard', icon: <LayoutDashboard size={20} /> },
         { id: 'bookings', name: 'Bookings', icon: <CalendarCheck size={20} /> },
         { id: 'add-room', name: 'Add New Room', icon: <PlusCircle size={20} /> },
         { id: 'manage', name: 'Manage Rooms', icon: <Hotel size={20} /> },
-        { id: 'manage-offers', name: 'Manage Offers', icon: <Tag size={20} /> }, // নতুন ট্যাব
+        { id: 'manage-offers', name: 'Manage Offers', icon: <Tag size={20} /> },
+        { id: 'manage-packages', name: 'Manage Packages', icon: <Package size={20} /> }, // নতুন প্যাকেজ ট্যাব
+        { id: 'manage-blogs', name: 'Manage Blogs', icon: <FileText size={20} /> },
         { id: 'manage-gallery', name: 'Gallery', icon: <ImageIcon size={20} /> },
     ];
 
@@ -33,7 +35,7 @@ export const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOp
     };
 
     const sidebarBody = (
-        <div className="h-screen w-64 bg-[#0F172A] text-white p-5 flex flex-col relative border-r border-slate-800 shadow-2xl overflow-y-auto">
+        <div className="h-screen w-64 bg-[#0F172A] text-white p-5 flex flex-col relative border-r border-slate-800 shadow-2xl overflow-y-auto custom-scrollbar">
             {/* Close Button - Mobile Only */}
             <button 
                 onClick={() => setIsSidebarOpen(false)}
@@ -70,7 +72,7 @@ export const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOp
                 ))}
             </nav>
 
-            <div className="pt-5 border-t border-slate-800">
+            <div className="pt-5 border-t border-slate-800 mt-4">
                 <button onClick={handleLogout} className="flex items-center gap-4 px-4 py-3.5 text-slate-400 hover:text-red-400 w-full rounded-xl transition-colors">
                     <LogOut size={20} />
                     <span className="font-bold text-sm">Logout</span>

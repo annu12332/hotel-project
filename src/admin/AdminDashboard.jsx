@@ -6,7 +6,9 @@ import ManageRooms from '../admin/ManageRooms';
 import AllBookings from './AllBookings';
 import ManageGallery from './ManageGallery'; 
 import ManageOffers from './ManageOffers'; 
-import { Menu, Hotel, Calendar, DollarSign, Bell, Tag } from 'lucide-react';
+import ManageBlogs from './ManageBlogs'; 
+import ManagePackages from './ManagePackages'; 
+import { Menu, Hotel, Calendar, DollarSign, Bell, FileText, Package } from 'lucide-react';
 import axios from 'axios';
 
 export const AdminDashboard = () => {
@@ -14,45 +16,53 @@ export const AdminDashboard = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [stats, setStats] = useState({
         totalRooms: 0,
+        totalPackages: 0,
         todayBookings: 0,
         revenue: 0,
         pendingBookings: 0
     });
 
-    // ১. নতুন ট্যাব টাইটেল যোগ করা হয়েছে
     const tabTitles = {
         'stats': 'Dashboard Overview',
         'add-room': 'Create New Listing',
         'manage': 'Room Inventory',
         'bookings': 'Booking Management',
         'manage-gallery': 'Gallery Management',
-        'manage-offers': 'Promotions & Offers' // নতুন টাইটেল
+        'manage-offers': 'Promotions & Offers',
+        'manage-blogs': 'Editorial & Blogs',
+        'manage-packages': 'Exclusive Packages'
     };
 
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
-                const roomsRes = await axios.get('https://hotel-server-qryr.onrender.com/api/rooms');
-                const bookingsRes = await axios.get('https://hotel-server-qryr.onrender.com/api/bookings');
+                // প্রতিটি এপিআই কল আলাদাভাবে করা হচ্ছে এবং এরর হ্যান্ডেল করা হয়েছে 
+                // যাতে একটি ফেল করলেও অন্যগুলো কাজ করে
+                const roomsReq = axios.get('https://hotel-server-qryr.onrender.com/api/rooms').catch(e => ({ data: [] }));
+                const bookingsReq = axios.get('https://hotel-server-qryr.onrender.com/api/bookings').catch(e => ({ data: [] }));
+                const packagesReq = axios.get('https://hotel-server-qryr.onrender.com/api/packages').catch(e => ({ data: [] }));
+
+                const [roomsRes, bookingsRes, packagesRes] = await Promise.all([roomsReq, bookingsReq, packagesReq]);
                 
-                const rooms = roomsRes.data;
-                const bookings = bookingsRes.data;
+                const rooms = roomsRes.data || [];
+                const bookings = bookingsRes.data || [];
+                const packages = packagesRes.data || [];
 
                 const today = new Date().toISOString().split('T')[0];
-                const todayBookings = bookings.filter(b => b.createdAt?.includes(today)).length;
+                const todayBookingsCount = bookings.filter(b => b.createdAt?.includes(today)).length;
                 
-                // এখানে 'pending' ছোট হাতের বা বড় হাতের (Pending) আপনার ডাটাবেস অনুযায়ী মিলিয়ে নিন
                 const pending = bookings.filter(b => b.status?.toLowerCase() === 'pending').length;
                 const totalRevenue = bookings.reduce((sum, b) => sum + (Number(b.totalPrice) || 0), 0);
 
                 setStats({
                     totalRooms: rooms.length,
-                    todayBookings: todayBookings || bookings.length,
+                    totalPackages: packages.length,
+                    todayBookings: todayBookingsCount || bookings.length,
                     revenue: totalRevenue,
                     pendingBookings: pending
                 });
             } catch (error) {
-                console.error("Error fetching stats:", error);
+                console.error("Dashboard Global Error:", error);
             }
         };
 
@@ -131,14 +141,15 @@ export const AdminDashboard = () => {
                                 {activeTab === 'manage' && <ManageRooms />}
                                 {activeTab === 'bookings' && <AllBookings />}
                                 {activeTab === 'manage-gallery' && <ManageGallery />}
-                                {/* ২. নতুন কন্ডিশনাল রেন্ডারিং যোগ করা হয়েছে */}
                                 {activeTab === 'manage-offers' && <ManageOffers />}
+                                {activeTab === 'manage-blogs' && <ManageBlogs />}
+                                {activeTab === 'manage-packages' && <ManagePackages />}
 
                                 {activeTab === 'stats' && (
                                     <div className="space-y-8">
                                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
                                             <StatsCard label="Total Rooms" value={stats.totalRooms} icon={<Hotel size={22}/>} color="indigo" />
-                                            <StatsCard label="Reservations" value={stats.todayBookings} icon={<Calendar size={22}/>} color="blue" />
+                                            <StatsCard label="Active Packages" value={stats.totalPackages} icon={<Package size={22}/>} color="blue" />
                                             <StatsCard label="Pending Action" value={stats.pendingBookings} icon={<Bell size={22}/>} color="amber" />
                                             <StatsCard label="Total Revenue" value={`$${stats.revenue.toLocaleString()}`} icon={<DollarSign size={22}/>} color="emerald" />
                                         </div>
@@ -159,12 +170,11 @@ export const AdminDashboard = () => {
                                                     >
                                                         Review Bookings
                                                     </button>
-                                                    {/* শর্টকাট বাটন হিসেবে অফার ম্যানেজমেন্টে যাওয়ার অপশন */}
                                                     <button
-                                                        onClick={() => setActiveTab('manage-offers')}
-                                                        className="bg-slate-800 border border-slate-700 text-white px-8 py-4 rounded-2xl font-bold hover:bg-slate-700 transition-all active:scale-95"
+                                                        onClick={() => setActiveTab('manage-packages')}
+                                                        className="bg-slate-800 border border-slate-700 text-white px-8 py-4 rounded-2xl font-bold hover:bg-slate-700 transition-all active:scale-95 flex items-center justify-center gap-2"
                                                     >
-                                                        Create Offers
+                                                        <Package size={18} /> Manage Packages
                                                     </button>
                                                 </div>
                                             </div>

@@ -24,8 +24,10 @@ import AboutUs from './pages/AboutUs';
 import AllPhotos from './pages/AllPhotos';
 import Offers from './pages/Offers';
 import OfferDetails from './pages/OffersDetails';
-import Login from './admin/Login'; // আপনার তৈরি করা Login পেজ
+import Login from './admin/Login';
 import { AdminDashboard } from './admin/AdminDashboard';
+import BlogPage from './pages/BlogPage';
+import BlogDetails from './pages/BlogDetails';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -85,6 +87,9 @@ function App() {
           <Route path="/room/:id" element={<RoomDetails />} />
           <Route path="/reservation" element={<ReservationForm />} />
           <Route path="/about" element={<AboutUs />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/blog/:id" element={<BlogDetails />} />
+
           <Route path="/gallery" element={<AllPhotos />} />
           <Route path="/offers" element={<Offers />} />
           <Route path="/offers/:id" element={<OfferDetails />} />
@@ -96,9 +101,9 @@ function App() {
 
           {/* --- Protected Admin Routes --- */}
           {/* লগইন করা না থাকলে কেউ /admin/dashboard এ ঢুকতে পারবে না */}
-          <Route 
-            path="/admin/dashboard/*" 
-            element={user ? <AdminDashboard /> : <Navigate to="/login" />} 
+          <Route
+            path="/admin/dashboard/*"
+            element={user ? <AdminDashboard /> : <Navigate to="/login" />}
           />
 
           {/* ভুল ইউআরএল দিলে হোমে পাঠিয়ে দিবে */}
