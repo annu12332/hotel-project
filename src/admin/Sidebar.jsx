@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     LayoutDashboard, PlusCircle, Hotel, LogOut, 
-    CalendarCheck, Image as ImageIcon, X, Tag, FileText, Package 
+    CalendarCheck, Image as ImageIcon, X, Tag, FileText, Package, Leaf
 } from 'lucide-react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase.config'; 
@@ -11,14 +11,13 @@ import { useNavigate } from 'react-router-dom';
 export const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) => {
     const navigate = useNavigate();
 
-    // menuItems-এ 'manage-packages' যুক্ত করা হয়েছে
     const menuItems = [
         { id: 'stats', name: 'Dashboard', icon: <LayoutDashboard size={20} /> },
         { id: 'bookings', name: 'Bookings', icon: <CalendarCheck size={20} /> },
         { id: 'add-room', name: 'Add New Room', icon: <PlusCircle size={20} /> },
         { id: 'manage', name: 'Manage Rooms', icon: <Hotel size={20} /> },
         { id: 'manage-offers', name: 'Manage Offers', icon: <Tag size={20} /> },
-        { id: 'manage-packages', name: 'Manage Packages', icon: <Package size={20} /> }, // নতুন প্যাকেজ ট্যাব
+        { id: 'manage-packages', name: 'Manage Packages', icon: <Package size={20} /> },
         { id: 'manage-blogs', name: 'Manage Blogs', icon: <FileText size={20} /> },
         { id: 'manage-gallery', name: 'Gallery', icon: <ImageIcon size={20} /> },
     ];
@@ -35,23 +34,28 @@ export const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOp
     };
 
     const sidebarBody = (
-        <div className="h-screen w-64 bg-[#0F172A] text-white p-5 flex flex-col relative border-r border-slate-800 shadow-2xl overflow-y-auto custom-scrollbar">
+        // Theme updated to Dark Slate + Emerald Highlights
+        <div className="h-screen w-64 bg-[#1C2431] text-stone-100 p-5 flex flex-col relative border-r border-stone-800 shadow-2xl overflow-y-auto custom-scrollbar">
             {/* Close Button - Mobile Only */}
             <button 
                 onClick={() => setIsSidebarOpen(false)}
-                className="md:hidden absolute top-4 right-4 p-2 bg-white/5 hover:bg-white/10 rounded-full text-slate-400"
+                className="md:hidden absolute top-5 right-4 p-2 bg-stone-800 hover:bg-stone-700 rounded-full text-stone-400"
             >
-                <X size={22} />
+                <X size={20} />
             </button>
 
+            {/* Logo Section */}
             <div className="flex items-center gap-3 mb-10 px-2 mt-2">
-                <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center font-black text-lg shadow-lg shadow-blue-500/20">A</div>
+                <div className="w-10 h-10 bg-emerald-500 rounded-2xl flex items-center justify-center font-black text-xl shadow-lg shadow-emerald-500/20 text-white">
+                    <Leaf size={22} />
+                </div>
                 <div>
-                    <h1 className="text-lg font-bold uppercase text-white leading-none tracking-tight">AlMaris</h1>
-                    <p className="text-[10px] text-slate-500 uppercase font-bold mt-1">Admin Panel</p>
+                    <h1 className="text-xl font-black text-white leading-none tracking-tight">Eco<span className="text-emerald-400">Resort</span></h1>
+                    <p className="text-[10px] text-stone-400 uppercase font-bold mt-1 tracking-widest">Admin Panel</p>
                 </div>
             </div>
 
+            {/* Menu Items */}
             <nav className="space-y-1.5 flex-1">
                 {menuItems.map((item) => (
                     <button
@@ -60,20 +64,21 @@ export const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOp
                             setActiveTab(item.id);
                             if (window.innerWidth < 768) setIsSidebarOpen(false);
                         }}
-                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all ${
+                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-medium text-sm ${
                             activeTab === item.id
-                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
-                                : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                                ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 font-semibold'
+                                : 'text-stone-300 hover:bg-stone-800 hover:text-white'
                         }`}
                     >
                         {item.icon}
-                        <span className="font-semibold text-sm">{item.name}</span>
+                        <span>{item.name}</span>
                     </button>
                 ))}
             </nav>
 
-            <div className="pt-5 border-t border-slate-800 mt-4">
-                <button onClick={handleLogout} className="flex items-center gap-4 px-4 py-3.5 text-slate-400 hover:text-red-400 w-full rounded-xl transition-colors">
+            {/* Logout Button */}
+            <div className="pt-5 border-t border-stone-800 mt-4">
+                <button onClick={handleLogout} className="flex items-center gap-4 px-4 py-3.5 text-stone-400 hover:text-red-400 w-full rounded-xl transition-colors">
                     <LogOut size={20} />
                     <span className="font-bold text-sm">Logout</span>
                 </button>
@@ -98,7 +103,7 @@ export const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOp
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setIsSidebarOpen(false)}
-                            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                            className="absolute inset-0 bg-stone-950/60 backdrop-blur-sm"
                         />
                         {/* Drawer */}
                         <motion.div

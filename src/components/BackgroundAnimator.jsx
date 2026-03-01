@@ -20,7 +20,7 @@ const BackgroundAnimator = () => {
                 className="w-full h-full animate-bg-global bg-cover bg-center"
                 style={{
                     // Check korun ei link-ti browser-e kaj korche kina
-                    backgroundImage: "url('https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=2000')",
+                    backgroundImage: "url('https://plus.unsplash.com/premium_photo-1661962821338-c07da63995f9?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8ZWNvJTIwcmVzb3J0fGVufDB8fDB8fHww')",
                 }}
             ></div>
         </>

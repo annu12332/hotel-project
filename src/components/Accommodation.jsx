@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import BackgroundAnimator from './BackgroundAnimator'; 
+import { FaLeaf, FaArrowRight, FaWind, FaUsers } from 'react-icons/fa';
 
 const Accommodation = () => {
     const [displayRooms, setDisplayRooms] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    const { scrollYProgress } = useScroll();
+    const y = useTransform(scrollYProgress, [0, 1], ['0%', '5%']);
+
     useEffect(() => {
-        AOS.init({ duration: 1200, once: true, offset: 150 });
+        AOS.init({ duration: 800, once: true }); // Faster AOS animation
 
         const fetchRooms = async () => {
             try {
@@ -27,119 +30,118 @@ const Accommodation = () => {
         fetchRooms();
     }, []);
 
+    // Animation variants for cards
+    const cardVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+    };
+
     return (
-        <section className="relative py-20 md:py-32 overflow-hidden bg-[#050505]">
-            <BackgroundAnimator />
+        // NATURAL THEME BACKGROUND
+        <section className="relative py-16 md:py-24 overflow-hidden bg-stone-50 text-stone-900">
+            {/* --- Organic Decorative Background --- */}
+            <motion.div style={{ y }} className="absolute inset-0 z-0">
+                <div className="absolute inset-0 bg-gradient-to-b from-emerald-50/30 via-stone-50 to-stone-50"></div>
+                {/* Soft Abstract Shapes - More subtle */}
+                <div className="absolute -top-40 -left-20 w-[400px] h-[400px] bg-emerald-100 rounded-full blur-[100px] opacity-40"></div>
+                <div className="absolute -bottom-20 -right-20 w-[400px] h-[400px] bg-stone-200 rounded-full blur-[100px] opacity-40"></div>
+            </motion.div>
             
             <div className="relative z-10 container mx-auto px-6 md:px-12 lg:px-20">
-                {/* --- Section Header --- */}
-                <div className="text-center mb-20" data-aos="fade-up">
-                    <div className="flex items-center justify-center gap-4 mb-6">
-                        <span className="h-[1px] w-8 md:w-12 bg-[#b59473]/40"></span>
-                        <span className="text-[#b59473] uppercase tracking-[0.6em] text-[10px] md:text-xs font-bold italic">The Sanctuary</span>
-                        <span className="h-[1px] w-8 md:w-12 bg-[#b59473]/40"></span>
+                
+                {/* --- Section Header - Compact --- */}
+                <div className="text-center mb-16" data-aos="fade-up">
+                    <div className="flex items-center justify-center gap-3 mb-3">
+                        <span className="h-px w-8 bg-emerald-700/30"></span>
+                        <span className="text-emerald-800 uppercase tracking-[0.2em] text-[10px] font-semibold flex items-center gap-2">
+                            <FaLeaf size={10} /> Benttuury Awaits
+                        </span>
+                        <span className="h-px w-8 bg-emerald-700/30"></span>
                     </div>
-                    <h2 className="text-white text-5xl md:text-7xl font-serif tracking-tight leading-tight">
-                        Exquisite <span className="italic font-light text-[#b59473]/90">Living</span>
+                    
+                    <h2 className="text-stone-950 text-4xl md:text-6xl font-serif tracking-tight leading-tight mb-4">
+                        Your <span className="italic font-light text-emerald-700">Private</span> Oasis
                     </h2>
+                    
+                    <p className="text-stone-700 max-w-lg mx-auto text-base font-light leading-relaxed">
+                        Thoughtfully designed to blend with the surrounding rainforest.
+                    </p>
                 </div>
 
-                {/* --- Luxury List --- */}
-                <div className="flex flex-col gap-16 md:gap-0">
-                    {loading ? (
-                        // Simple Skeleton Loader
-                        <div className="h-64 flex items-center justify-center text-[#b59473] font-serif italic animate-pulse">
-                            Loading Sanctuary...
-                        </div>
-                    ) : (
-                        displayRooms.map((room, index) => (
+                {/* --- Room Grid (Bento Style) - Compact --- */}
+                {loading ? (
+                    <div className="text-center text-emerald-700 font-serif italic text-lg animate-pulse py-16">
+                        Preparing your sanctuary...
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+                        {displayRooms.map((room, index) => (
                             <motion.div 
                                 key={room._id || index}
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true, margin: "-50px" }}
-                                transition={{ duration: 0.8, ease: "easeOut" }}
-                                className={`group flex flex-col ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} 
-                                min-h-[450px] relative items-stretch mb-0 md:mb-12`}
+                                initial="hidden"
+                                whileInView="visible"
+                                viewport={{ once: true, amount: 0.2 }}
+                                variants={cardVariants}
+                                whileHover={{ y: -5, shadow: "0 25px 50px -12px rgba(0, 0, 0, 0.1)" }}
+                                className={`group relative bg-white rounded-3xl p-5 shadow-lg shadow-stone-200/40 border border-stone-100 flex flex-col transition-all duration-300`}
                             >
-                                {/* --- Image Section --- */}
-                                <div className="relative w-full md:w-[55%] overflow-hidden aspect-[4/3] md:aspect-auto shadow-2xl z-20">
-                                    <motion.img 
-                                        loading="lazy"
+                                {/* --- Card Top: Image --- */}
+                                <div className="relative rounded-2xl overflow-hidden aspect-[16/10] mb-6">
+                                    <img 
                                         src={room.thumbnail || room.image} 
                                         alt={room.type} 
-                                        className="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 transition-all duration-1000"
-                                        whileHover={{ scale: 1.08 }}
-                                        transition={{ duration: 1.5 }}
+                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                     />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 group-hover:opacity-40 transition-opacity duration-700"></div>
                                     
                                     {/* Price Badge */}
-                                    <div className="absolute top-8 left-8 md:left-auto md:right-8 bg-black/60 backdrop-blur-md border border-[#b59473]/30 px-5 py-3 flex flex-col items-center">
-                                        <span className="text-[#b59473] text-[9px] font-bold tracking-[0.3em]">STARTING AT</span>
-                                        <span className="text-white text-xl font-serif">${room.price}</span>
-                                    </div>
-                                </div>
-
-                                {/* --- Content Section --- */}
-                                <div className={`flex-1 flex flex-col justify-center p-10 md:p-16 lg:p-20 
-                                    bg-[#0a0a0a]/80 backdrop-blur-xl border border-white/5 relative z-30
-                                    ${index % 2 === 0 ? 'md:-ml-12' : 'md:-mr-12'} 
-                                    my-auto shadow-2xl transition-transform duration-700 group-hover:-translate-y-2`}>
-                                    
-                                    <div className="space-y-4 mb-8">
-                                        <div className={`flex items-center gap-3 text-[#b59473] text-[10px] uppercase tracking-[0.3em] font-medium
-                                            ${index % 2 !== 0 && 'md:flex-row-reverse'}`}>
-                                            <span className="bg-[#b59473]/10 px-2 py-0.5">{room.size}</span>
-                                            <span className="w-4 h-[1px] bg-[#b59473]/50"></span>
-                                            <span>{room.maxOccupancy?.adults || room.adults || 2} Adults</span>
+                                    <div className="absolute top-4 left-4 bg-white/50 backdrop-blur-md border border-white/20 px-4 py-2 rounded-xl shadow-inner">
+                                        <div className="text-stone-950 text-xl font-serif">
+                                            ${room.price}<span className="text-xs font-sans text-stone-600">/night</span>
                                         </div>
-                                        <h3 className="text-white text-3xl md:text-5xl font-serif tracking-wide group-hover:text-[#b59473] transition-colors duration-500">
-                                            {room.type}
-                                        </h3>
-                                    </div>
-
-                                    <p className={`text-gray-400 text-sm md:text-base leading-relaxed font-light italic mb-10
-                                        ${index % 2 !== 0 && 'md:text-right'}`}>
-                                        "{room.description}"
-                                    </p>
-
-                                    {/* Interactive Button */}
-                                    <div className={index % 2 !== 0 ? 'md:ml-auto' : ''}>
-                                        <Link 
-                                            to={`/room/${room.slug || room._id}`}
-                                            className="inline-flex items-center gap-6 group/btn"
-                                        >
-                                            <span className="text-white text-[11px] uppercase tracking-[0.5em] font-bold group-hover/btn:text-[#b59473] transition-all duration-300">
-                                                Explore Suite
-                                            </span>
-                                            <div className="relative w-16 h-[1px] bg-white/20 overflow-hidden">
-                                                <div className="absolute inset-0 bg-[#b59473] -translate-x-full group-hover/btn:translate-x-0 transition-transform duration-500"></div>
-                                            </div>
-                                        </Link>
                                     </div>
                                 </div>
 
-                                {/* Decorative Index */}
-                                <span className={`hidden lg:block absolute -bottom-6 text-[150px] font-serif text-white/[0.02] pointer-events-none leading-none
-                                    ${index % 2 === 0 ? 'right-0' : 'left-0'}`}>
-                                    0{index + 1}
-                                </span>
+                                {/* --- Card Bottom: Info --- */}
+                                <div className="flex-1 flex flex-col">
+                                    <div className="flex justify-between items-center mb-3">
+                                        <div className={`bg-emerald-50 text-emerald-800 text-[9px] uppercase tracking-[0.2em] font-semibold px-3 py-1 rounded-full`}>
+                                            {room.category || 'Luxury Suite'}
+                                        </div>
+                                        <div className="flex gap-2 text-stone-400 text-sm">
+                                            <FaWind /> <FaUsers />
+                                        </div>
+                                    </div>
+                                    
+                                    <h3 className="text-stone-950 text-2xl font-serif tracking-tight mb-2 group-hover:text-emerald-700 transition-colors">
+                                        {room.type}
+                                    </h3>
+                                    
+                                    <p className="text-stone-600 text-xs leading-relaxed font-light mb-6 flex-1 line-clamp-2">
+                                        {room.description}
+                                    </p>
+                                    
+                                    <Link 
+                                        to={`/room/${room.slug || room._id}`}
+                                        className="group/btn inline-flex items-center gap-2 text-emerald-800 font-semibold text-xs mt-auto"
+                                    >
+                                        Explore Sanctuary
+                                        <FaArrowRight className="transition-transform duration-300 group-hover/btn:translate-x-1" />
+                                        <span className="absolute bottom-5 left-5 w-0 h-px bg-emerald-700 transition-all group-hover/btn:w-20"></span>
+                                    </Link>
+                                </div>
                             </motion.div>
-                        ))
-                    )}
-                </div>
+                        ))}
+                    </div>
+                )}
 
-                {/* --- Footer CTA --- */}
-                <div className="mt-32 text-center" data-aos="fade-up">
+                {/* --- Footer CTA - Compact --- */}
+                <div className="mt-20 text-center" data-aos="fade-up">
                     <Link 
                         to="/all-rooms" 
-                        className="group relative inline-flex items-center justify-center px-16 py-6 overflow-hidden border border-[#b59473]/40"
+                        className="group inline-flex items-center gap-3 bg-emerald-700 text-white px-8 py-3 rounded-full text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-emerald-800 transition-all shadow-lg shadow-emerald-500/10"
                     >
-                        <span className="absolute inset-0 bg-[#b59473] transition-transform duration-500 ease-out translate-y-full group-hover:translate-y-0"></span>
-                        <span className="relative z-10 text-white group-hover:text-black text-[12px] font-bold uppercase tracking-[0.5em] transition-colors duration-500">
-                            Discover All Suites
-                        </span>
+                        View All Escapes
+                        <FaArrowRight size={10} />
                     </Link>
                 </div>
             </div>

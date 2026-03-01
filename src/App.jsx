@@ -30,6 +30,7 @@ import BlogPage from './pages/BlogPage';
 import BlogDetails from './pages/BlogDetails';
 import PackageDetails from './pages/PackageDetails';
 import PackagesPage from './pages/PackagePage';
+import Experience from './components/Experience';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -79,6 +80,7 @@ function App() {
               <HeroSection />
               <Banner />
               <Accommodation />
+              <Experience/>
               <Facilities />
               <ExtraFacilities />
               <BookingBar />
